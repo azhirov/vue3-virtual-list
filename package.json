@@ -5,6 +5,10 @@
   "files": ["dist"],
   "main": "./dist/index.umd.cjs",
   "module": "./dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azhirov/vue3-virtual-list.git"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
