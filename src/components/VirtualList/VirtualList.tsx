@@ -28,6 +28,10 @@ export const VirtualList = defineComponent({
       type: [Number, String],
       default: undefined,
     },
+    minItemHeight: {
+      type: Number,
+      default: 16,
+    },
     height: {
       type: [Number, String],
       default: undefined,
@@ -50,6 +54,8 @@ export const VirtualList = defineComponent({
       height: heightUnit.value,
     }))
 
+    const minItemHeightRef = toRef(props, 'minItemHeight')
+
     const {
       containerRef,
       markerRef,
@@ -60,7 +66,7 @@ export const VirtualList = defineComponent({
       paddingTop,
       paddingBottom,
       computedItems,
-    } = useVirtual(props, toRef(props, 'items'))
+    } = useVirtual(props, toRef(props, 'items'), minItemHeightRef)
 
     useToggleScope(() => props.renderless, () => {
       function handleListeners (add = false) {

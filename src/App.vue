@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { VirtualList } from '@/components/VirtualList'
+import { VirtualList } from './components/VirtualList'
 
 const items = ref([1,2,3,4,5,6,7,8,9,10])
 
@@ -18,7 +18,7 @@ for (let i = 0; i < 100; i += 1) {
 </template>
 
 <style scoped>
-.v-virtual-scroll {
+.v-virtual-list {
   height: 400px;
 }
 </style>

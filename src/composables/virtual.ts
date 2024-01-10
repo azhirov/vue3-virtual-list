@@ -5,7 +5,18 @@ import { useDisplay } from '@/composables/display'
 import { useResizeObserver } from '@/composables/resizeObserver'
 
 // Utilities
-import { computed, nextTick, onScopeDispose, ref, shallowRef, watch, watchEffect } from 'vue'
+import {
+  computed,
+  MaybeRef,
+  nextTick,
+  onMounted,
+  onScopeDispose,
+  ref,
+  shallowRef,
+  unref,
+  watch,
+  watchEffect
+} from 'vue'
 import { debounce, clamp } from '@/utils/helpers'
 import { IN_BROWSER } from '@/utils/globals'
 
@@ -23,7 +34,7 @@ type VirtualProps = {
   height?: number | string
 }
 
-export function useVirtual <T> (props: VirtualProps, items: Ref<readonly T[]>) {
+export function useVirtual <T> (props: VirtualProps, items: Ref<readonly T[]>, minItemHeight: MaybeRef<number> = 16) {
   const display = useDisplay()
 
   const itemHeight = shallowRef(0)
@@ -32,13 +43,16 @@ export function useVirtual <T> (props: VirtualProps, items: Ref<readonly T[]>) {
   })
 
   const first = shallowRef(0)
-  const last = shallowRef(Math.ceil(
+  const last = shallowRef(
+    props.height ? Math.ceil(
     // Assume 16px items filling the entire screen height if
     // not provided. This is probably incorrect but it minimises
     // the chance of ending up with empty space at the bottom.
     // The default value is set here to avoid poisoning getSize()
-    (parseInt(props.height?.toString() ?? '0') || display.height.value) / (itemHeight.value || 16)
-  ) || 1)
+    (parseInt(props.height?.toString() ?? '0') || display.height.value) / (itemHeight.value || unref(minItemHeight))
+  ) || 1 : 0)
+  console.log(last.value);
+
   const paddingTop = shallowRef(0)
   const paddingBottom = shallowRef(0)
 
@@ -50,6 +64,10 @@ export function useVirtual <T> (props: VirtualProps, items: Ref<readonly T[]>) {
   /** markerRef's offsetTop, lazily evaluated */
   let markerOffset = 0
 
+  onMounted(() => {
+    const height = containerRef.value?.clientHeight ?? parseInt(props.height?.toString() ?? '0')
+    last.value = (height || display.height.value) / (itemHeight.value || unref(minItemHeight)) || 1
+  })
   const { resizeRef, contentRect } = useResizeObserver()
   watchEffect(() => {
     resizeRef.value = containerRef.value
