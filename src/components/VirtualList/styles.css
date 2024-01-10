@@ -1,0 +1,10 @@
+.v-virtual-list {
+    display: block;
+    flex: 1 1 auto;
+    max-width: 100%;
+    overflow: auto;
+    position: relative;
+}
+.v-virtual-list__container {
+    display: block;
+}
